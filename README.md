@@ -243,3 +243,5 @@ Next, you can use the following resources to know more about beyond hello world 
         "weather_forecast": "Sunny"
     }
     ```
+
+本番URL: "https://xhf7coszi5.execute-api.ap-northeast-1.amazonaws.com/Prod/hello"
