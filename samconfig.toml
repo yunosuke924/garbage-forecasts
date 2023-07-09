@@ -4,7 +4,7 @@ version = 0.1
 
 [default]
 [default.global.parameters]
-stack_name = "ca-sam-app-08-garbage-forecast"
+stack_name = "ca-sam-app-08-garabage-forecasts"
 
 [default.build.parameters]
 cached = true
@@ -16,10 +16,16 @@ lint = true
 [default.deploy.parameters]
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = true
-resolve_s3 = true
+resolve_s3 = false
+s3_prefix = "ca-sam-app-08-garabage-forecasts"
+region = "ap-northeast-1"
+disable_rollback = true
+image_repositories = []
+s3_bucket = "ca-academy-08"
+profile = "go-academy"
 
 [default.package.parameters]
-resolve_s3 = true
+resolve_s3 = false
 
 [default.sync.parameters]
 watch = true
