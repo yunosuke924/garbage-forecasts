@@ -1,3 +1,4 @@
+// TODO: DB接続テスト
 package main
 
 import (
