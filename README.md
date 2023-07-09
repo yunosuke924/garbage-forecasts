@@ -138,3 +138,108 @@ Here are a few ideas that you can use to get more acquainted as to how this over
 Next, you can use the following resources to know more about beyond hello world samples and how others structure their Serverless applications:
 
 * [AWS Serverless Application Repository](https://aws.amazon.com/serverless/serverlessrepo/)
+
+## 概要
+
+- 地域のゴミの収集日情報と気象庁が公開している天気予報情報をもとに、ゴミ出しをするべきか否かを判断することができるサービス
+
+## **解決する問題**
+
+- 大雪、台風、豪雨、大風など、ゴミ出しの日と悪天候が重なることで発生する以下の問題の解決の一助を目指す。
+    - 家庭ゴミなどを適切なタイミングで廃棄しないことで、不衛生な状況を引き起こす可能性がある。
+    - ゴミが溜まることで居住スペースを圧迫してしまう可能性がある。
+    - 強風によってゴミが飛ばされたりして環境汚染やゴミ回収業者など関係者の方に迷惑をかけてしまう。
+
+## 機能要件
+
+優先度：高
+
+- **ゴミの種類**から、**ゴミ出し日指数**を表示
+    - 指定した種類のゴミの二週間分の**ゴミ出し日指数**を表示。
+- **ゴミ出し日**から、**ゴミ出し日和指数**を表示。
+    - 指定した日の全種類の**ゴミ出し日指数**を表示。
+- **ゴミ種別**と**ゴミ出し日**から、**ゴミ出し日指数**を表示。
+    - 指定した日と種類の**ゴミ出し日指数**を表示。
+
+優先度：中
+
+- リマインダー機能：ゴミの種類を登録しておいて、次にそのゴミを出せる日が、強風や大雨などで適切ではない場合にslack チャンネルにアラートを送信。
+
+## 開発要件
+
+- SAM アプリケーションの作成。
+- マイグレーションファイルの作成。
+    
+    ```yaml
+    id: ID
+    date: 予報日
+    garbage_type: ゴミの分類
+    garbage_forecast_index: ゴミ出し日和指数
+    weather_forecast: 天気予報
+    created_at: レコード作成日
+    updated_at: レコード更新日
+    ```
+    
+- dockerコンテナを起動してローカルで動作確認。
+- 一旦仮デプロイ、URL確認
+- 本番DBにデータを注入、DB確認。
+- 天気予報APIから天気予報情報を取得、レスポンス確認。
+- ゴミの種類ごとの収集日を取得、レスポンスの確認。
+- 上記二つをもとに次の日のforecastsレコードを作成、更新する関数を作成。
+- 上記タスクの定期実行バッチ（Scheduler）の作成。
+- **指定した種類**のゴミ出し日指数を表示するエンドポイントの作成
+    - GET `/api/v1/garbage_forecasts/search?garbage_type=burnable&days=14`
+    
+    ```go
+    {
+        "garbage_type": "burnable",
+        "forecast": [
+            {
+                "date": "2023-07-10",
+                "garbage_forecast_index": 0.6,
+                "weather_forecast": "Sunny"
+            },
+            {
+                "date": "2023-07-17",
+                "garbage_forecast_index": 0.9,
+                "weather_forecast": "Cloudy"
+            },
+            // ... (他の日付の情報)
+        ]
+    }
+    ```
+    
+- **指定した日**の全種類のゴミ出し日指数を表示するエンドポイントの作成
+    - GET `/api/v1/trash_forecasts/search?datetime=2023-7-09`
+    
+    ```go
+    {
+    	"date": "2023-07-10",
+      "forecast": [
+          {
+              // "date": "2023-07-10",
+    					"trash_type": "burnable",
+              "garbage_forecast_index": 0.6,
+              "weather_forecast": "Sunny"
+          },
+          {
+              // "date": "2023-07-17",
+    					"trash_type": "non_burnable",
+              "garbage_forecast_index": 0.9,
+              "weather_forecast": "Cloudy"
+          },
+      ]
+    }
+    ```
+    
+- **ゴミ種別**と**ゴミ出し日**から、**ゴミ出し日指数**を表示するエンドポイントの作成
+    - GET `/api/v1/garabage_forecasts/search?garbage_type=burnable&datetime=2023-7-09`
+    
+    ```go
+    {
+        "garbage_type": "burnable",
+        "date": "2023-07-10",
+        "garbage_forecast_index": 0.7,
+        "weather_forecast": "Sunny"
+    }
+    ```
