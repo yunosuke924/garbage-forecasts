@@ -12,35 +12,41 @@ Globals:
     MemorySize: 128
 
 Resources:
-  HelloWorldFunction:
+  CreateForecastsFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello-world/
-      Handler: hello-world
-      Runtime: go1.x
+      CodeUri: create-forecasts/ # 実行するコードのディレクトリ
+      Handler: create-forecasts # 実行バイナリーの名前
+      Runtime: go1.x # 実行環境
       Architectures:
         - x86_64
-      Events:
+      Events: # ここがLambda関数が実行されるトリガー
         CatchAll:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
-            Method: GET
-      Role: arn:aws:iam::880843126767:role/go-academy-lambda
+            Path: /forecasts
+            Method: POST
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
-        Variables:
+        Variables: # 環境変数 キーバリュー
           PARAM1: VALUE
-
-# Outputs:
-#   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-#   # Find out more about other implicit resources you can reference within SAM
-#   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-#   HelloWorldAPI:
-#     Description: "API Gateway endpoint URL for Prod environment for First Function"
-#     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-#   HelloWorldFunction:
-#     Description: "First Lambda Function ARN"
-#     Value: !GetAtt HelloWorldFunction.Arn
-#   HelloWorldFunctionIamRole:
-#     Description: "Implicit IAM Role created for Hello World function"
-#     Value: !GetAtt HelloWorldFunctionRole.Arn
+      # IAMロールのARN(ユニークなリソースネーム)
+      Role: arn:aws:iam::880843126767:role/go-academy-lambda
+  GetForecastsFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: get-forecasts/ # 実行するコードのディレクトリ
+      Handler: get-forecasts # 実行バイナリーの名前
+      Runtime: go1.x # 実行環境
+      Architectures:
+        - x86_64
+      Events: # ここがLambda関数が実行されるトリガー
+        CatchAll:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /forecasts
+            Method: GET
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables: # 環境変数 キーバリュー
+          PARAM1: VALUE
+      # IAMロールのARN(ユニークなリソースネーム)
+      Role: arn:aws:iam::880843126767:role/go-academy-lambda
