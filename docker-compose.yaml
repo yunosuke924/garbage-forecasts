@@ -1,0 +1,33 @@
+version: '3'
+services:
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      # TODO: DATABASE名変えたいけど変えても反映されない
+      MYSQL_DATABASE: training
+    ports:
+      - 3306:3306
+    networks:
+        - external
+
+  tool:
+    image: phpmyadmin/phpmyadmin:5
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOST=db #mysqlサービス名を指定
+      - PMA_USER=root
+      - PMA_PASSWORD=password
+    ports:
+      - 8080:80
+    networks:
+      - external
+
+networks:
+  external:
+    driver: bridge
+    internal: false
+    name: go-academy
