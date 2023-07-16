@@ -10,11 +10,11 @@ Globals:
     Timeout: 5
     MemorySize: 128
 Resources:
-  HelloWorldFunction:
+  GetGarbageForecastsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: HelloWorldFunction
-      Handler: hello-world
+      CodeUri: GetGarbageForecastsFunction
+      Handler: get-garbage-forecasts
       Runtime: go1.x
       Architectures:
       - x86_64
@@ -22,11 +22,51 @@ Resources:
         CatchAll:
           Type: Api
           Properties:
-            Path: /hello
+            Path: /garbage_forecasts
             Method: GET
       Role: arn:aws:iam::880843126767:role/go-academy-lambda
       Environment:
         Variables:
           PARAM1: VALUE
     Metadata:
-      SamResourceId: HelloWorldFunction
+      SamResourceId: GetGarbageForecastsFunction
+  CreateForecastsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: CreateForecastsFunction
+      Handler: create-forecasts
+      Runtime: go1.x
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /forecasts
+            Method: POST
+      Environment:
+        Variables:
+          PARAM1: VALUE
+      Role: arn:aws:iam::880843126767:role/go-academy-lambda
+    Metadata:
+      SamResourceId: CreateForecastsFunction
+  GetForecastsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: GetForecastsFunction
+      Handler: get-forecasts
+      Runtime: go1.x
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /forecasts
+            Method: GET
+      Environment:
+        Variables:
+          PARAM1: VALUE
+      Role: arn:aws:iam::880843126767:role/go-academy-lambda
+    Metadata:
+      SamResourceId: GetForecastsFunction
