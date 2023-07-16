@@ -24,15 +24,14 @@ var (
 	ErrNon200Response = errors.New("Non 200 Response found")
 )
 
-
 type Forecast struct {
-	ID                    int `json:"id"`
-	ForecastDate          string `json:"forecast_date"`
-	GarbageType           int `json:"garbage_type"`
-	GarbageForecastIndex  float64 `json:"garbage_forecast_index"`
-	WeatherForecast       int `json:"weather_forecast"`
-	CreatedAt             string `json:"created_at"`
-	UpdatedAt             string `json:"updated_at"`
+	ID                   int     `json:"id"`
+	ForecastDate         string  `json:"forecast_date"`
+	GarbageType          int     `json:"garbage_type"`
+	GarbageForecastIndex float64 `json:"garbage_forecast_index"`
+	WeatherForecast      int     `json:"weather_forecast"`
+	CreatedAt            string  `json:"created_at"`
+	UpdatedAt            string  `json:"updated_at"`
 }
 
 type ResponseJSON struct {
@@ -58,12 +57,12 @@ func getForecasts(db *sql.DB) ([]Forecast, error) {
 	for rows.Next() {
 		var f Forecast
 		err := rows.Scan(&f.ID,
-										&f.ForecastDate,
-										&f.GarbageType,
-										&f.GarbageForecastIndex,
-										&f.WeatherForecast,
-										&f.CreatedAt,
-										&f.UpdatedAt)
+			&f.ForecastDate,
+			&f.GarbageType,
+			&f.GarbageForecastIndex,
+			&f.WeatherForecast,
+			&f.CreatedAt,
+			&f.UpdatedAt)
 		if err != nil {
 			fmt.Println("Scanエラー")
 			return nil, err
@@ -85,7 +84,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	if err != nil {
 		fmt.Println("DB接続エラー")
 	}
-	
+
 	// 関数がリターンする直前に呼び出される
 	defer db.Close()
 
@@ -126,4 +125,3 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 func main() {
 	lambda.Start(handler)
 }
-
