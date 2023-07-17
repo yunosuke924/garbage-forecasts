@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -61,7 +62,7 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 			Body:       "Error decoding JSON",
 		}, nil
 	}
-	db, err := sql.Open("mysql", "root:password@(db:3306)/training?parseTime=true") // データベースに接続
+	db, err := sql.Open("mysql", os.Getenv("DB_CONNECTION")) // データベースに接続
 	if err != nil {
 		fmt.Println("DB接続エラー")
 	}

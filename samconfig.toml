@@ -23,6 +23,7 @@ disable_rollback = true
 image_repositories = []
 s3_bucket = "ca-academy-08"
 profile = "go-academy"
+parameter_overrides = "Database=academy08:YbXRo8!_pU!cmo9yKbzZ@tcp(ca-go-academy-3.c9ml7do7yvmn.ap-northeast-1.rds.amazonaws.com)/academy08?parseTime=true"
 
 [default.package.parameters]
 resolve_s3 = false
@@ -32,6 +33,7 @@ watch = true
 
 [default.local_start_api.parameters]
 warm_containers = "EAGER"
+parameter_overrides = "Database=root:password@(db:3306)/training?parseTime=true"
 
 [default.local_start_lambda.parameters]
 warm_containers = "EAGER"

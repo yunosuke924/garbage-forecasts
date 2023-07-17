@@ -9,6 +9,9 @@ Globals:
   Function:
     Timeout: 5
     MemorySize: 128
+Parameters:
+  Database:
+    Type: String
 Resources:
   CreateForecastsFunction:
     Type: AWS::Serverless::Function
@@ -27,6 +30,8 @@ Resources:
       Environment:
         Variables:
           PARAM1: VALUE
+          DB_CONNECTION:
+            Ref: Database
       Role: arn:aws:iam::880843126767:role/go-academy-lambda
     Metadata:
       SamResourceId: CreateForecastsFunction
@@ -47,6 +52,8 @@ Resources:
       Environment:
         Variables:
           PARAM1: VALUE
+          DB_CONNECTION:
+            Ref: Database
       Role: arn:aws:iam::880843126767:role/go-academy-lambda
     Metadata:
       SamResourceId: GetForecastsFunction
