@@ -9,27 +9,10 @@ Globals:
   Function:
     Timeout: 5
     MemorySize: 128
+Parameters:
+  Database:
+    Type: String
 Resources:
-  GetGarbageForecastsFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: GetGarbageForecastsFunction
-      Handler: get-garbage-forecasts
-      Runtime: go1.x
-      Architectures:
-      - x86_64
-      Events:
-        CatchAll:
-          Type: Api
-          Properties:
-            Path: /garbage_forecasts
-            Method: GET
-      Role: arn:aws:iam::880843126767:role/go-academy-lambda
-      Environment:
-        Variables:
-          PARAM1: VALUE
-    Metadata:
-      SamResourceId: GetGarbageForecastsFunction
   CreateForecastsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -47,6 +30,8 @@ Resources:
       Environment:
         Variables:
           PARAM1: VALUE
+          DB_CONNECTION:
+            Ref: Database
       Role: arn:aws:iam::880843126767:role/go-academy-lambda
     Metadata:
       SamResourceId: CreateForecastsFunction
@@ -67,6 +52,42 @@ Resources:
       Environment:
         Variables:
           PARAM1: VALUE
+          DB_CONNECTION:
+            Ref: Database
       Role: arn:aws:iam::880843126767:role/go-academy-lambda
     Metadata:
       SamResourceId: GetForecastsFunction
+  UploadCsvFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: UploadCsvFunction
+      Handler: upload-csv
+      Runtime: go1.x
+      Architectures:
+      - x86_64
+      Events:
+        CatchAll:
+          Type: Api
+          Properties:
+            Path: /upload
+            Method: POST
+      Environment:
+        Variables:
+          PARAM1: VALUE
+      Role: arn:aws:iam::880843126767:role/go-academy-lambda
+    Metadata:
+      SamResourceId: UploadCsvFunction
+  SetDataFromCsvScheduleFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: SetDataFromCsvScheduleFunction
+      Handler: set-data-from-csv-schedule
+      Runtime: go1.x
+      Events:
+        ScheduleEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 3 * * ? *)
+      Role: arn:aws:iam::880843126767:role/go-academy-lambda
+    Metadata:
+      SamResourceId: SetDataFromCsvScheduleFunction

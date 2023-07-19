@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -24,15 +25,14 @@ var (
 	ErrNon200Response = errors.New("Non 200 Response found")
 )
 
-
 type Forecast struct {
-	ID                    int `json:"id"`
-	ForecastDate          string `json:"forecast_date"`
-	GarbageType           int `json:"garbage_type"`
-	GarbageForecastIndex  float64 `json:"garbage_forecast_index"`
-	WeatherForecast       int `json:"weather_forecast"`
-	CreatedAt             string `json:"created_at"`
-	UpdatedAt             string `json:"updated_at"`
+	ID                   int     `json:"id"`
+	ForecastDate         string  `json:"forecast_date"`
+	GarbageType          int     `json:"garbage_type"`
+	GarbageForecastIndex float64 `json:"garbage_forecast_index"`
+	WeatherForecast      int     `json:"weather_forecast"`
+	CreatedAt            string  `json:"created_at"`
+	UpdatedAt            string  `json:"updated_at"`
 }
 
 type ResponseJSON struct {
@@ -58,12 +58,12 @@ func getForecasts(db *sql.DB) ([]Forecast, error) {
 	for rows.Next() {
 		var f Forecast
 		err := rows.Scan(&f.ID,
-										&f.ForecastDate,
-										&f.GarbageType,
-										&f.GarbageForecastIndex,
-										&f.WeatherForecast,
-										&f.CreatedAt,
-										&f.UpdatedAt)
+			&f.ForecastDate,
+			&f.GarbageType,
+			&f.GarbageForecastIndex,
+			&f.WeatherForecast,
+			&f.CreatedAt,
+			&f.UpdatedAt)
 		if err != nil {
 			fmt.Println("Scanエラー")
 			return nil, err
@@ -81,11 +81,12 @@ func getForecasts(db *sql.DB) ([]Forecast, error) {
 }
 
 func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	db, err := sql.Open("mysql", "root:password@(db:3306)/training?parseTime=true") // データベースに接続
+	// db, err := sql.Open("mysql", "root:password@(db:3306)/training?parseTime=true") // データベースに接続
+	db, err := sql.Open("mysql", os.Getenv("DB_CONNECTION")) // データベースに接続
 	if err != nil {
 		fmt.Println("DB接続エラー")
 	}
-	
+
 	// 関数がリターンする直前に呼び出される
 	defer db.Close()
 
@@ -126,4 +127,3 @@ func handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 func main() {
 	lambda.Start(handler)
 }
-

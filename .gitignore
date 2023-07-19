@@ -1,2 +1,3 @@
 /data/
 /.aws-sam/
+/.s3-local/

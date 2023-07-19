@@ -10,6 +10,9 @@ Globals:
   Function:
     Timeout: 5
     MemorySize: 128
+Parameters:
+  Database:
+    Type: String
 
 Resources:
   CreateForecastsFunction:
@@ -29,6 +32,7 @@ Resources:
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables: # 環境変数 キーバリュー
           PARAM1: VALUE
+          DB_CONNECTION: !Ref Database
       # IAMロールのARN(ユニークなリソースネーム)
       Role: arn:aws:iam::880843126767:role/go-academy-lambda
   GetForecastsFunction:
@@ -48,5 +52,38 @@ Resources:
       Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
         Variables: # 環境変数 キーバリュー
           PARAM1: VALUE
+          DB_CONNECTION: !Ref Database
       # IAMロールのARN(ユニークなリソースネーム)
       Role: arn:aws:iam::880843126767:role/go-academy-lambda
+  UploadCsvFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: upload-csv/ # 実行するコードのディレクトリ
+      Handler: upload-csv # 実行バイナリーの名前
+      Runtime: go1.x # 実行環境
+      Architectures:
+        - x86_64
+      Events: # ここがLambda関数が実行されるトリガー
+        CatchAll:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /upload
+            Method: POST
+      Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+        Variables: # 環境変数 キーバリュー
+          PARAM1: VALUE
+      # IAMロールのARN(ユニークなリソースネーム)
+      Role: arn:aws:iam::880843126767:role/go-academy-lambda
+  SetDataFromCsvScheduleFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: set-data-from-csv-schedule/ # 実行するコードのディレクトリ
+      Handler: set-data-from-csv-schedule # 実行バイナリーの名前
+      Runtime: go1.x
+      Events:
+        ScheduleEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 3 * * ? *) # 毎日夜3時に実行
+      Role: arn:aws:iam::880843126767:role/go-academy-lambda
+
